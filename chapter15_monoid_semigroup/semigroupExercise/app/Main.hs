@@ -15,6 +15,7 @@ module Main where
 import Lib
 
 import Data.Semigroup
+import qualified Data.Monoid as M
 import Test.QuickCheck
 import Test.QuickCheck.Gen (oneof)
 
@@ -106,6 +107,15 @@ type TypeOr = Or Int Int -> Or Int Int -> Or Int Int -> Bool
 checkOr :: IO ()
 checkOr = quickCheck (semigroupAssoc :: TypeOr)
 
+--------------------------------------------------------------------------------
+-- newtype Combine a b =
+--   Combine { unCombine :: (a -> b) }
+
+-- instance Semigroup (Combine a b) where
+--   (Combine f) <> (Combine g) = Combine (f and g appended, whatever that concrete append operation is, so I think this requires <> from Monoid, but this coincides the one from Semigroup, what's a programmer to do?) 
+
+
+--------------------------------------------------------------------------------
 main :: IO ()
 main = do
   checkTrivial
