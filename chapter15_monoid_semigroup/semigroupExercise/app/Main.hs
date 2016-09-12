@@ -15,7 +15,8 @@ module Main where
 import Lib
 
 import Data.Semigroup
-import qualified Data.Monoid as M
+import Data.Monoid hiding ((<>))
+import GHC.Generics
 import Test.QuickCheck
 import Test.QuickCheck.Gen (oneof)
 
@@ -108,12 +109,27 @@ checkOr :: IO ()
 checkOr = quickCheck (semigroupAssoc :: TypeOr)
 
 --------------------------------------------------------------------------------
--- newtype Combine a b =
---   Combine { unCombine :: (a -> b) }
+-- See the following for discussion about this question:
+-- http://stackoverflow.com/questions/39456716/how-to-write-semigroup-instance-for-this-data-type
+
+newtype Combine a b =
+  Combine { unCombine :: (a -> b) }
 
 -- instance Semigroup (Combine a b) where
 --   (Combine f) <> (Combine g) = Combine (f and g appended, whatever that concrete append operation is, so I think this requires <> from Monoid, but this coincides the one from Semigroup, what's a programmer to do?) 
 
+-- instance Semigroup (Combine a b) where
+--   Combine f <> Combine g = Combine f
+
+-- This is also a Monoid?
+-- instance Monoid b => Semigroup (Combine a b) where
+--   (Combine f) <> (Combine g) = Combine (\x -> f x `mappend` g x)
+
+-- Let's remove the Monoid, and only have Semigroup
+instance Semigroup b => Semigroup (Combine a b) where
+  Combine f <> Combine g = Combine (f <> g)
+
+-- TODO how to write quickCheck for Combine? How to use CoArbitrary?
 
 --------------------------------------------------------------------------------
 main :: IO ()
