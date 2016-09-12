@@ -36,6 +36,7 @@ newtype Identity a = Identity a
 checkTrivial :: IO ()
 checkTrivial = quickCheck (semigroupAssoc :: TrivialAssoc)
 
+--------------------------------------------------------------------------------
 newtype BoolConj = BoolConj Bool deriving (Eq, Show)
 
 instance Semigroup BoolConj where
@@ -44,7 +45,7 @@ instance Semigroup BoolConj where
   BoolConj False <> BoolConj True  = BoolConj False
   BoolConj False <> BoolConj False  = BoolConj False
 
-boolConjGen :: Gen (BoolConj)
+boolConjGen :: Gen BoolConj
 boolConjGen = do
   a <- arbitrary
   return (BoolConj a)
@@ -55,14 +56,11 @@ instance Arbitrary BoolConj where
 checkBoolConj :: IO ()
 checkBoolConj = quickCheck (semigroupAssoc :: BoolConj -> BoolConj -> BoolConj -> Bool)
 
-
-data Three a b c = Three a b c
-
-instance (Eq a, Eq b, Eq c) => Eq (Three a b c) where
-  (Three x y z) == (Three x' y' z') = x == x' && y == y' && z == z'
+--------------------------------------------------------------------------------
+data Three a b c = Three a b c deriving (Eq, Show)
 
 instance Semigroup (Three a b c) where
-  (Three x y z) <> (Three xx yy zz) = (Three x y z)
+  (Three x y z) <> (Three xx yy zz) = Three x y z
 
 threeGen :: (Arbitrary a, Arbitrary b, Arbitrary c) => Gen (Three a b c)
 threeGen = do
@@ -74,12 +72,15 @@ threeGen = do
 instance (Arbitrary a, Arbitrary b, Arbitrary c) =>  Arbitrary (Three a b c) where
   arbitrary = threeGen
 
-threeGenInt :: Gen (Three Int Int Int)
-threeGenInt = threeGen
+--threeGenInt :: Gen (Three Int Int Int)
+--threeGenInt = threeGen
 
--- checkThree :: IO ()
--- checkThree = quickCheck (semigroupAssoc :: (Three a b c) -> (Three a b c) -> (Three a b c) -> Bool)
+type TypeThree  = Three Int Int Int -> Three Int Int Int -> Three Int Int Int -> Bool
 
+checkThree :: IO ()
+checkThree = quickCheck (semigroupAssoc :: TypeThree)
+
+--------------------------------------------------------------------------------
 data Or a b =
     Fst a
   | Snd b
@@ -91,23 +92,24 @@ instance Semigroup (Or a b) where
   Snd a <> Fst b = Snd a
   Snd a <> Snd b = Snd a
 
-orGenEqual :: (Arbitrary a, Arbitrary b) => Gen (Or a b)
-orGenEqual = do
-  a <- arbitrary
-  b <- arbitrary
-  oneof [return $ Fst a,
-         return $ Snd b]
+orGen :: (Arbitrary a, Arbitrary b) => Gen (Or a b)
+orGen = do
+  x <- arbitrary
+  y <- arbitrary
+  oneof [return $ Fst x,
+         return $ Snd y]
 
-orGenIntInt :: Gen (Or Int Int)
-orGenIntInt = orGenEqual
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Or a b) where
+  arbitrary = orGen
+
+type TypeOr = Or Int Int -> Or Int Int -> Or Int Int -> Bool
 
 checkOr :: IO ()
-checkOr = quickCheck (semigroupAssoc :: (Or a b) -> (Or a b) -> (Or a b) -> Bool)
-
+checkOr = quickCheck (semigroupAssoc :: TypeOr)
 
 main :: IO ()
 main = do
   checkTrivial
   checkBoolConj
-  
+  checkOr
 
