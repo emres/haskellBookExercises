@@ -53,8 +53,10 @@ boolConjGen = do
 instance Arbitrary BoolConj where
   arbitrary = boolConjGen
 
+type TypeBool = BoolConj -> BoolConj -> BoolConj -> Bool
+
 checkBoolConj :: IO ()
-checkBoolConj = quickCheck (semigroupAssoc :: BoolConj -> BoolConj -> BoolConj -> Bool)
+checkBoolConj = quickCheck (semigroupAssoc :: TypeBool)
 
 --------------------------------------------------------------------------------
 data Three a b c = Three a b c deriving (Eq, Show)
@@ -71,9 +73,6 @@ threeGen = do
 
 instance (Arbitrary a, Arbitrary b, Arbitrary c) =>  Arbitrary (Three a b c) where
   arbitrary = threeGen
-
---threeGenInt :: Gen (Three Int Int Int)
---threeGenInt = threeGen
 
 type TypeThree  = Three Int Int Int -> Three Int Int Int -> Three Int Int Int -> Bool
 
