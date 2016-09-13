@@ -15,6 +15,7 @@ import Data.Monoid
 import GHC.Generics
 import Test.QuickCheck
 import Test.QuickCheck.Gen (oneof)
+import Control.Arrow ((&&&))
 
 --------------------------------------------------------------------------------
 monoidAssoc :: (Eq m, Monoid m) => m -> m -> m -> Bool
@@ -57,7 +58,48 @@ checkBoolConjLI = quickCheck (monoidLeftIdentity :: BoolConj -> Bool)
 checkBoolConjRI:: IO ()
 checkBoolConjRI = quickCheck (monoidLeftIdentity :: BoolConj -> Bool)
 
+--------------------------------------------------------------------------------
+newtype Mem s a =
+  Mem {
+    runMem :: s -> (a,s)
+  }
 
+-- instance (Monoid a) => Monoid (Mem s a) where
+--   mempty      = Mem (\s -> (mempty, s))
+--   mappend (Mem f) (Mem g) = Mem (f . snd . g)
+
+-- instance (Monoid a) => Monoid (Mem s a) where
+--   mempty      = Mem (\s -> (mempty, s))
+--   mappend (Mem f) (Mem g) =
+--     Mem $ \x -> ( (fst . f <> fst . g) x
+--                 , (snd . f . snd . g)  x )
+
+-- Usage of Control.Arrow.&&& was suggested by ghc-mod
+instance (Monoid a) => Monoid (Mem s a) where
+  mempty      = Mem (\s -> (mempty, s))
+  mappend (Mem f) (Mem g) = Mem $ (fst . f <> fst . g) &&& (snd . f . snd . g)
+
+
+
+-- Given the following code:
+f' = Mem $ \s -> ("hi", s + 1)
+
+-- main = do
+--   print $ runMem (f' <> mempty) 0
+--   print $ runMem (mempty <> f') 0
+--   print $ (runMem mempty 0 :: (String, Int))
+--   print $ runMem (f' <> mempty) 0 == runMem f' 0
+--   print $ runMem (mempty <> f') 0 == runMem f' 0
+
+-- A correct Monoid for Mem should, given the above code, get the following
+-- output:
+
+--     Prelude> main
+--      ("hi",1)
+--      ("hi",1)
+--      ("",0)
+--      True
+--      True
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -65,4 +107,9 @@ main = do
   checkBoolConj
   checkBoolConjLI
   checkBoolConjRI
+  print $ runMem (f' <> mempty) 0
+  print $ runMem (mempty <> f') 0
+  print (runMem mempty 0 :: (String, Int))
+  print $ runMem (f' <> mempty) 0 == runMem f' 0
+  print $ runMem (mempty <> f') 0 == runMem f' 0
 
