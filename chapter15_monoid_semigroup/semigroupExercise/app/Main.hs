@@ -132,6 +132,19 @@ instance Semigroup b => Semigroup (Combine a b) where
 -- TODO how to write quickCheck for Combine? How to use CoArbitrary?
 
 --------------------------------------------------------------------------------
+
+-- Hint: We can do something that seems a little more specific and natural to
+-- functions now that the input and output types are the same.
+
+newtype Comp a =
+  Comp { unComp :: (a -> a) }
+
+instance (Semigroup a) => Semigroup (Comp a) where
+  Comp f <> Comp g = Comp (f <> g)
+
+-- TODO how to write quickCheck for Comp? How to use CoArbitrary?
+
+--------------------------------------------------------------------------------
 main :: IO ()
 main = do
   checkTrivial
