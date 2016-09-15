@@ -79,6 +79,34 @@ type PairIntFC = (Pair Int) -> IntToInt -> IntToInt -> Bool
 checkPairFunctional :: IO ()
 checkPairFunctional = quickCheck (functorCompose' :: PairIntFC)
 
+--------------------------------------------------------------------------------
+data Two a b = Two a b deriving (Eq, Show)
+
+instance Functor (Two a) where
+  fmap f (Two a b) = (Two a (f b))
+
+twoGen :: (Arbitrary a, Arbitrary b) => Gen (Two a b)
+twoGen = do
+  x <- arbitrary
+  y <- arbitrary
+  return (Two x y)
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Two a b) where
+  arbitrary = twoGen
+  
+checkIdentityTwo :: IO ()
+checkIdentityTwo = quickCheck $ \x -> functorIdentity (x :: Two Int String)
+
+helperTwo x = functorCompose (+1) (*2) (x :: Two String Int)
+checkTwoCompose :: IO ()
+checkTwoCompose = quickCheck helperTwo
+
+type StringToDouble = Fun String Double
+type IntToString = Fun Int String
+type TwoStringIntFC = (Two String Int) -> IntToString -> StringToDouble-> Bool
+checkTwoFunctional :: IO ()
+checkTwoFunctional = quickCheck (functorCompose' :: TwoStringIntFC)
+
 
 main :: IO ()
 main = do
@@ -89,3 +117,6 @@ main = do
   checkIdentityPair
   checkPairCompose
   checkPairFunctional
+  checkIdentityTwo
+  checkTwoCompose
+  checkTwoFunctional
