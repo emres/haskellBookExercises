@@ -22,6 +22,7 @@ functorCompose' :: (Eq (f c), Functor f) =>
                 -> Bool
 functorCompose' x (Fun _ f) (Fun _ g) =
   (fmap (g . f) x) == (fmap g . fmap f $ x)
+
 --------------------------------------------------------------------------------
 newtype Identity a = Identity a
   deriving (Eq, Show)
@@ -49,7 +50,35 @@ type IntToInt = Fun Int Int
 type IntFC = (Identity Int) -> IntToInt -> IntToInt -> Bool
 checkIdentityFunctional :: IO ()
 checkIdentityFunctional = quickCheck (functorCompose' :: IntFC)
+
+
 --------------------------------------------------------------------------------
+data Pair a = Pair a a
+  deriving (Eq, Show)
+
+instance Functor Pair where
+  fmap f (Pair x y) = (Pair (f x) (f y))
+
+pairGen :: (Arbitrary a) => Gen (Pair a)
+pairGen = do
+  x <- arbitrary
+  y <- arbitrary
+  return (Pair x y)
+
+instance (Arbitrary a) => Arbitrary (Pair a) where
+  arbitrary = pairGen
+  
+checkIdentityPair :: IO ()
+checkIdentityPair = quickCheck $ \x -> functorIdentity (x :: Pair Int)
+
+helperPair x = functorCompose (+1) (*2) (x :: Pair Int)
+checkPairCompose :: IO ()
+checkPairCompose = quickCheck helperPair
+
+type PairIntFC = (Pair Int) -> IntToInt -> IntToInt -> Bool
+checkPairFunctional :: IO ()
+checkPairFunctional = quickCheck (functorCompose' :: PairIntFC)
+
 
 main :: IO ()
 main = do
@@ -57,3 +86,6 @@ main = do
   checkIdentityIdentity
   checkIdentityCompose
   checkIdentityFunctional
+  checkIdentityPair
+  checkPairCompose
+  checkPairFunctional
