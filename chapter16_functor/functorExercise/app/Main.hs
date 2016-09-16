@@ -160,6 +160,15 @@ helperThree' x = functorCompose (+1) (*2) (x :: Three' Int Int)
 checkThree'Compose :: IO ()
 checkThree'Compose = quickCheck helperThree'
 
+--------------------------------------------------------------------------------
+data Possibly a =
+    LolNope
+  | Yeppers a
+  deriving (Eq, Show)
+
+instance Functor Possibly where
+  fmap f LolNope = LolNope
+  fmap f (Yeppers a) = Yeppers (f a)
 
 main :: IO ()
 main = do
