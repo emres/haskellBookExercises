@@ -136,6 +136,29 @@ type ThreeStringIntFC =
 checkThreeFunctional :: IO ()
 checkThreeFunctional = quickCheck (functorCompose' :: ThreeStringIntFC)
 
+--------------------------------------------------------------------------------
+data Three' a b = Three' a b b deriving (Eq, Show)
+
+instance Functor (Three' a) where
+  fmap f (Three' x y z) = Three' x (f y) (f z)
+
+three'Gen :: (Arbitrary a, Arbitrary b) => Gen (Three' a b)
+three'Gen = do
+  x <- arbitrary
+  y <- arbitrary
+  z <- arbitrary
+  return (Three' x y z)
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Three' a b) where
+   arbitrary = three'Gen
+
+checkIdentityThree' :: IO ()
+checkIdentityThree' =
+  quickCheck $ \x -> functorIdentity (x :: Three' Float String)
+
+helperThree' x = functorCompose (+1) (*2) (x :: Three' Int Int)
+checkThree'Compose :: IO ()
+checkThree'Compose = quickCheck helperThree'
 
 
 main :: IO ()
@@ -156,3 +179,5 @@ main = do
   checkIdentityThree
   checkThreeCompose
   checkThreeFunctional
+
+  checkIdentityThree'
