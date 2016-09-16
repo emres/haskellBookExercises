@@ -170,6 +170,14 @@ instance Functor Possibly where
   fmap f LolNope = LolNope
   fmap f (Yeppers a) = Yeppers (f a)
 
+--------------------------------------------------------------------------------
+newtype Constant a b =
+  Constant { getConstant :: a }
+  deriving (Eq, Show)
+
+instance Functor (Constant m) where
+  fmap _ (Constant v) = Constant v
+
 main :: IO ()
 main = do
   putStrLn "Let's solve some Functor exercises!"
