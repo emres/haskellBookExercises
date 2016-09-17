@@ -180,7 +180,7 @@ instance Functor (Constant m) where
 
 
 --------------------------------------------------------------------------------
--- Rearrange the arguments to the type constructor of the datatype so the
+-- Rearrange the arguments to the type constructor of the datatype, so the
 -- Functor instance works.
 data Sum b a =
     First a
@@ -190,6 +190,16 @@ instance Functor (Sum e) where
   fmap f (First a) = First (f a)
   fmap f (Second b) = Second b
 
+
+--------
+
+data Company a c b =
+    DeepBlue a c
+  | Something b
+
+instance Functor (Company e e') where
+  fmap f (Something b)  = Something (f b)
+  fmap _ (DeepBlue a c) = DeepBlue a c
 
 
 
