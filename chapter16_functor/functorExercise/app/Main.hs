@@ -1,4 +1,5 @@
 {-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE FlexibleInstances #-}
 
 module Main where
 
@@ -211,6 +212,60 @@ instance Functor (More x) where
   fmap f (L a b a') = L (f a) b (f a')
   fmap f (R b a b') = R b (f a) b'
 
+--------------------------------------------------------------------------------
+-- Write Functor instances for the following datatypes.
+
+----------
+data Quant a b =
+    Finance
+  | Desk a
+  | Bloor b
+
+instance Functor (Quant a) where
+  fmap f Finance = Finance
+  fmap f (Desk x) = Desk x
+  fmap f (Bloor y) = Bloor (f y)
+
+----------
+-- data K a b =
+--   K a
+
+-- instance Functor (K a) where
+--   fmap f (K x) = K x
+
+----------
+newtype Flip f a b =
+  Flip (f b a)
+  deriving (Eq, Show)
+
+newtype K a b =
+  K a
+
+instance Functor (K b) where
+  fmap f (K x) = K x
+
+-- should remind you of an
+-- instance you've written before
+-- TODO write Functor instance
+-- instance Functor (Flip K a) where
+--   fmap = undefined 
+
+
+----------
+data LiftItOut f a =
+  LiftItOut (f a)
+
+instance Functor f => Functor (LiftItOut f) where
+  fmap f (LiftItOut fa) = LiftItOut (fmap f fa)
+
+----------
+data Parappa f g a =
+  DaWrappa (f a) (g a)
+
+instance (Functor f, Functor g) => Functor (Parappa f g) where
+  fmap f (DaWrappa fa ga) = DaWrappa (fmap f fa) (fmap f ga)
+
+              
 main :: IO ()
 main = do
   putStrLn "Let's solve some Functor exercises!"
