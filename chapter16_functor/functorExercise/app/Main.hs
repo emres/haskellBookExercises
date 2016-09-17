@@ -263,9 +263,26 @@ data Parappa f g a =
   DaWrappa (f a) (g a)
 
 instance (Functor f, Functor g) => Functor (Parappa f g) where
-  fmap f (DaWrappa fa ga) = DaWrappa (fmap f fa) (fmap f ga)
+ fmap f (DaWrappa fa ga) = DaWrappa (fmap f fa) (fmap f ga)
 
-              
+----------
+-- Don’t ask for more typeclass instances than you need.
+-- You can let GHC tell you what to do.
+data IgnoreOne f g a b =
+  IgnoringSomething (f a) (g b)
+
+instance (Functor f, Functor g) => Functor (IgnoreOne f g a) where
+  fmap f (IgnoringSomething fa gb) = IgnoringSomething fa (fmap f gb)
+
+----------
+data Notorious g o a t =
+  Notorious (g o) (g a) (g t)
+
+instance (Functor g) => Functor (Notorious g o a) where
+  fmap f (Notorious go ga gt) = Notorious go ga (fmap f gt)
+
+
+  
 main :: IO ()
 main = do
   putStrLn "Let's solve some Functor exercises!"
