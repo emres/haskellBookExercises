@@ -178,6 +178,21 @@ newtype Constant a b =
 instance Functor (Constant m) where
   fmap _ (Constant v) = Constant v
 
+
+--------------------------------------------------------------------------------
+-- Rearrange the arguments to the type constructor of the datatype so the
+-- Functor instance works.
+data Sum b a =
+    First a
+  | Second b
+
+instance Functor (Sum e) where
+  fmap f (First a) = First (f a)
+  fmap f (Second b) = Second b
+
+
+
+
 main :: IO ()
 main = do
   putStrLn "Let's solve some Functor exercises!"
