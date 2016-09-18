@@ -241,14 +241,15 @@ newtype Flip f a b =
 newtype K a b =
   K a
 
-instance Functor (K b) where
+instance Functor (K a) where
   fmap f (K x) = K x
 
 -- should remind you of an
 -- instance you've written before
--- TODO write Functor instance
--- instance Functor (Flip K a) where
---   fmap = undefined 
+-- For explanation, see the following:
+-- http://stackoverflow.com/questions/39558488/how-to-write-the-functor-instance-for-this-type
+instance Functor (Flip K a) where
+  fmap f (Flip (K x)) = Flip (K (f x))
 
 
 ----------
@@ -281,7 +282,14 @@ data Notorious g o a t =
 instance (Functor g) => Functor (Notorious g o a) where
   fmap f (Notorious go ga gt) = Notorious go ga (fmap f gt)
 
+----------
+data List a =
+    Nil
+  | Cons a (List a)
 
+-- instance Functor List where
+--   fmap f Nil = Nil
+--   fmap f (Cons x _) = Cons (f x)
   
 main :: IO ()
 main = do
