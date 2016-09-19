@@ -290,7 +290,18 @@ data List a =
 
 instance Functor List where
   fmap f Nil = Nil
-  fmap f (Cons x y) = (Cons (f x) (fmap f y))
+  fmap f (Cons x y) = Cons (f x) (fmap f y)
+
+----------
+data GoatLord a =
+    NoGoat
+  | OneGoat a
+  | MoreGoats (GoatLord a) (GoatLord a) (GoatLord a)
+
+instance Functor GoatLord where
+  fmap f NoGoat = NoGoat
+  fmap f (OneGoat x) = OneGoat (f x)
+  fmap f (MoreGoats l n r) = MoreGoats (fmap f l) (fmap f n) (fmap f r)
   
 main :: IO ()
 main = do
