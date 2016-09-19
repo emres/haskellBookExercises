@@ -302,7 +302,24 @@ instance Functor GoatLord where
   fmap f NoGoat = NoGoat
   fmap f (OneGoat x) = OneGoat (f x)
   fmap f (MoreGoats l n r) = MoreGoats (fmap f l) (fmap f n) (fmap f r)
-  
+
+
+----------
+-- You’ll use an extra functor for this one, although your solution might do it
+-- monomorphically without using fmap. Keep in mind that you will probably not
+-- be able to validate this one in the usual manner. Do your best to make it
+-- work.
+data TalkToMe a =
+    Halt
+  | Print String a
+  | Read (String -> a)
+
+instance Functor TalkToMe where
+  fmap f Halt = Halt
+  fmap f (Print x y) = Print x (f y)
+  fmap f (Read f') = Read (fmap f f')
+
+
 main :: IO ()
 main = do
   putStrLn "Let's solve some Functor exercises!"
