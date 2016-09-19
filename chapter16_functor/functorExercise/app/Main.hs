@@ -286,10 +286,11 @@ instance (Functor g) => Functor (Notorious g o a) where
 data List a =
     Nil
   | Cons a (List a)
+  deriving (Eq, Show)
 
--- instance Functor List where
---   fmap f Nil = Nil
---   fmap f (Cons x _) = Cons (f x)
+instance Functor List where
+  fmap f Nil = Nil
+  fmap f (Cons x y) = (Cons (f x) (fmap f y))
   
 main :: IO ()
 main = do
