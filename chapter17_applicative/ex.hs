@@ -1,5 +1,6 @@
 -- Some of the exercises from Haskell Book, Chapter 17. Applicatives
 import Control.Applicative
+import Data.Monoid
 import Data.List (elemIndex)
 
 -- f x = lookup x [(3, "hello"), (4, "julie"), (5, "kbai")]
@@ -63,8 +64,39 @@ instance Functor Identity where
   fmap f (Identity x) = Identity (f x)
 
 instance Applicative Identity where
+  --pure :: a -> Identity a
   pure x = Identity x
+  -- (<*>) :: Identity (a -> b) -> Identity a -> Identity b
   (<*>) (Identity f) (Identity x) = Identity (f x)
+
+--------------------------------------------------------------------------------
+-- Write an Applicative instance for Constant.
+--
+-- > Constant (Sum 1) <*> Constant (Sum 2)
+-- Constant {getConstant = Sum {getSum = 3}
+--
+-- > Constant undefined <*> Constant (Sum 2)
+-- Constant (Sum {getSum = *** Exception: Prelude.undefined
+--
+-- > pure 1 :: Constant String Int
+-- Constant {getConstant = ""}
+
+newtype Constant a b =
+  Constant { getConstant :: a }
+  deriving (Eq, Ord, Show)
+
+instance Functor (Constant a) where
+  fmap _ (Constant x) = Constant x
+
+instance Monoid a => Applicative (Constant a) where
+  -- pure :: a -> f a
+  -- pure :: a -> Constant e a
+  pure _ = Constant mempty
+
+  -- f ~ Constant e
+  -- (<*>) :: f (a -> b) -> f a -> f b
+  -- (<*>) :: Constant e (a -> b) -> Constant e a -> Constant e b
+  (<*>) (Constant x) (Constant y) = Constant (mappend x y)
 
 
 --------------------------------------------------------------------------------
