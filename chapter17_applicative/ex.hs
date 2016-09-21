@@ -49,6 +49,25 @@ summed :: Maybe Integer
 summed = (fmap . fmap) sum (,) <$> x3 <*> y3
 
 --------------------------------------------------------------------------------
+-- Write an Applicative instance for Identity.
+-- so that:
+-- Prelude> const <$> [1, 2, 3] <*> [9, 9, 9]
+-- [1,1,1,2,2,2,3,3,3]
+-- Prelude> const <$> Identity [1, 2, 3] <*> Identity [9, 9, 9]
+-- Identity [1,2,3]
+newtype Identity a =
+  Identity a
+  deriving (Eq, Ord, Show)
+
+instance Functor Identity where
+  fmap f (Identity x) = Identity (f x)
+
+instance Applicative Identity where
+  pure x = Identity x
+  (<*>) (Identity f) (Identity x) = Identity (f x)
+
+
+--------------------------------------------------------------------------------
 main :: IO ()
 main = do
   putStrLn "Let's do some Applicative exercises!"
