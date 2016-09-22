@@ -121,18 +121,44 @@ data List a =
   | Cons a (List a)
   deriving (Eq, Show)
 
+
+-- In case you get stuck, use the following functions and hints.
+
+append :: List a -> List a -> List a
+append Nil ys = ys
+append (Cons x xs) ys = Cons x $ xs `append` ys
+
+fold :: (a -> b -> b) -> b -> List a -> b
+fold _ b Nil = b
+fold f b (Cons h t) = f h (fold f b t)
+
+concat' :: List (List a) -> List a
+concat' = fold append Nil
+
+-- write this one in terms of concat' and fmap
+flatMap :: (a -> List b) -> List a -> List b
+flatMap f as = concat' (fmap f as)
+
+-- Use the above and try using flatMap and fmap without explicitly
+-- pattern-matching on Cons cells. You’ll still need to handle the Nil cases.
+
 instance Functor List where
   fmap f Nil = Nil
   fmap f (Cons x y) = Cons (f x) (fmap f y)
 
+-- TODO: how flatMap and fmap without explicitly pattern-matching on Cons cells?
 instance Applicative List where
   pure x = (Cons x Nil)
   (<*>) _            Nil          = Nil
   (<*>) Nil          _            = Nil
   (<*>) (Cons f Nil) (Cons x Nil) = Cons (f x) Nil
-  (<*>) (Cons f Nil) x            = f <$> x
+  (<*>) (Cons f Nil) (Cons x xs)  = f <$> (Cons x xs)
   (<*>) (Cons f fs)  (Cons x Nil) = Cons (f x) (fs <*> (Cons x Nil))
-  (<*>) (Cons f fs)  (Cons x xs)  = Cons (f x) (fs <*> xs)
+  (<*>) (Cons f fs)  (Cons x xs)  =
+    Cons (f x) (f <$> xs)
+    `append` (fs <*> (Cons x Nil))
+    `append` (fs <*> xs)
+
   
 
 --------------------------------------------------------------------------------
