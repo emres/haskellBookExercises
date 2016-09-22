@@ -127,10 +127,12 @@ instance Functor List where
 
 instance Applicative List where
   pure x = (Cons x Nil)
-  -- (<*>) :: f (a -> b) -> f a -> f b
-  (<*>) f Nil  = Nil
-  (<*>) Nil x  = Nil
-  (<*>) (Cons f fs) (Cons x xs) = undefined 
+  (<*>) _            Nil          = Nil
+  (<*>) Nil          _            = Nil
+  (<*>) (Cons f Nil) (Cons x Nil) = Cons (f x) Nil
+  (<*>) (Cons f Nil) x            = f <$> x
+  (<*>) (Cons f fs)  (Cons x Nil) = Cons (f x) (fs <*> (Cons x Nil))
+  (<*>) (Cons f fs)  (Cons x xs)  = Cons (f x) (fs <*> xs)
   
 
 --------------------------------------------------------------------------------
