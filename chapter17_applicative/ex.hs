@@ -1,6 +1,6 @@
 -- Some of the exercises from Haskell Book, Chapter 17. Applicatives
-import Control.Applicative
-import Data.Monoid
+--import Control.Applicative
+--import Data.Monoid
 import Data.List (elemIndex)
 
 -- f x = lookup x [(3, "hello"), (4, "julie"), (5, "kbai")]
@@ -97,6 +97,17 @@ instance Monoid a => Applicative (Constant a) where
   -- (<*>) :: f (a -> b) -> f a -> f b
   -- (<*>) :: Constant e (a -> b) -> Constant e a -> Constant e b
   (<*>) (Constant x) (Constant y) = Constant (mappend x y)
+
+
+--------------------------------------------------------------------------------
+-- Exercise: Fixer Upper
+-- Given the function and values provided, use (<$>) from
+-- Functor, (<*>) and pure from the Applicative typeclass to
+-- fill in missing bits of the broken code to make it work.
+
+-- Solutions:
+-- const <$> Just "Hello" <*> pure "World"
+-- (,,,) <$> Just 90 <*> Just 10 <*> Just "Tierness" <*> Just [1, 2, 3]
 
 
 --------------------------------------------------------------------------------
