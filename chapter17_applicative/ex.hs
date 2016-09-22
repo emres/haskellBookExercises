@@ -109,6 +109,29 @@ instance Monoid a => Applicative (Constant a) where
 -- const <$> Just "Hello" <*> pure "World"
 -- (,,,) <$> Just 90 <*> Just 10 <*> Just "Tierness" <*> Just [1, 2, 3]
 
+--------------------------------------------------------------------------------
+-- Write the Applicative instance for `List a`
+-- Expected result:
+-- Prelude> let functions = Cons (+1) (Cons (*2) Nil)
+-- Prelude> let values = Cons 1 (Cons 2 Nil)
+-- Prelude> functions <*> values
+-- Cons 2 (Cons 3 (Cons 2 (Cons 4 Nil)))
+data List a =
+    Nil
+  | Cons a (List a)
+  deriving (Eq, Show)
+
+instance Functor List where
+  fmap f Nil = Nil
+  fmap f (Cons x y) = Cons (f x) (fmap f y)
+
+instance Applicative List where
+  pure x = (Cons x Nil)
+  -- (<*>) :: f (a -> b) -> f a -> f b
+  (<*>) f Nil  = Nil
+  (<*>) Nil x  = Nil
+  (<*>) (Cons f fs) (Cons x xs) = undefined 
+  
 
 --------------------------------------------------------------------------------
 main :: IO ()
