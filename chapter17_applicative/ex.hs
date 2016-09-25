@@ -175,9 +175,10 @@ instance Applicative ZipList' where
   (<*>) (ZipList' Nil) _ = ZipList' Nil
   (<*>) (ZipList' (Cons f _)) (ZipList' (Cons x Nil)) = ZipList' (Cons (f x) Nil)
   (<*>) (ZipList' (Cons f fs)) (ZipList' (Cons x xs)) =
-    ZipList' $ Cons (f x) (fs <*> xs)
-
-
+    ZipList' (zipf (Cons f fs) (Cons x xs)) where
+      zipf Nil     _xs    = Nil
+      zipf _fs    Nil     = Nil
+      zipf (Cons _f _fs) (Cons _x _xs) = Cons (_f _x) (zipf _fs _xs)
 
 --------------------------------------------------------------------------------
 main :: IO ()
