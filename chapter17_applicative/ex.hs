@@ -1,7 +1,7 @@
 -- Some of the exercises from Haskell Book, Chapter 17. Applicatives
 --import Control.Applicative
 --import Data.Monoid
-import Data.List (elemIndex)
+--import Data.List (elemIndex)
 
 -- f x = lookup x [(3, "hello"), (4, "julie"), (5, "kbai")]
 -- g x = lookup x [(7, "sup?"), (8, "chris"), (9, "aloha")]
@@ -11,43 +11,43 @@ import Data.List (elemIndex)
 --------------------------------------------------------------------------------
 -- make the following expressions type check
 ----------
-added :: Maybe Integer
-added = (+3) <$> (lookup (3 :: Integer) $ zip [1, 2, 3] [4, 5, 6])
+-- added :: Maybe Integer
+-- added = (+3) <$> (lookup (3 :: Integer) $ zip [1, 2, 3] [4, 5, 6])
 
-y :: Maybe Integer
-y = lookup (3 :: Integer) $ zip [1, 2, 3] [4, 5, 6]
+-- y :: Maybe Integer
+-- y = lookup (3 :: Integer) $ zip [1, 2, 3] [4, 5, 6]
 
-z :: Maybe Integer
-z = lookup (2 :: Integer) $ zip [1, 2, 3] [4, 5, 6]
+-- z :: Maybe Integer
+-- z = lookup (2 :: Integer) $ zip [1, 2, 3] [4, 5, 6]
 
-tupled :: Maybe (Integer, Integer)
-tupled = (,) <$> y <*> z
+-- tupled :: Maybe (Integer, Integer)
+-- tupled = (,) <$> y <*> z
 
-----------
-x2 :: Maybe Int
-x2 = elemIndex (3 :: Int) [1, 2, 3, 4, 5]
+-- ----------
+-- x2 :: Maybe Int
+-- x2 = elemIndex (3 :: Int) [1, 2, 3, 4, 5]
 
-y2 :: Maybe Int
-y2 = elemIndex (4 :: Int) [1, 2, 3, 4, 5]
+-- y2 :: Maybe Int
+-- y2 = elemIndex (4 :: Int) [1, 2, 3, 4, 5]
 
-max' :: Int -> Int -> Int
-max' = max
+-- max' :: Int -> Int -> Int
+-- max' = max
 
-maxed :: Maybe Int
-maxed = max' <$> x2 <*> y2
+-- maxed :: Maybe Int
+-- maxed = max' <$> x2 <*> y2
 
-----------
-xs = [1, 2, 3]
-ys = [4, 5, 6]
+-- ----------
+-- xss = [1, 2, 3]
+-- yys = [4, 5, 6]
 
-x3 :: Maybe Integer
-x3 = lookup 3 $ zip xs ys
+-- x3 :: Maybe Integer
+-- x3 = lookup 3 $ zip xss yys
 
-y3 :: Maybe Integer
-y3 = lookup 2 $ zip xs ys
+-- y3 :: Maybe Integer
+-- y3 = lookup 2 $ zip xss yys
 
-summed :: Maybe Integer
-summed = (fmap . fmap) sum (,) <$> x3 <*> y3
+-- summed :: Maybe Integer
+-- summed = (fmap . fmap) sum (,) <$> x3 <*> y3
 
 --------------------------------------------------------------------------------
 -- Write an Applicative instance for Identity.
@@ -143,7 +143,7 @@ flatMap f as = concat' (fmap f as)
 -- pattern-matching on Cons cells. You’ll still need to handle the Nil cases.
 
 instance Functor List where
-  fmap f Nil = Nil
+  fmap _ Nil = Nil
   fmap f (Cons x y) = Cons (f x) (fmap f y)
 
 -- TODO: how flatMap and fmap without explicitly pattern-matching on Cons cells?
@@ -159,7 +159,25 @@ instance Applicative List where
     `append` (fs <*> (Cons x Nil))
     `append` (fs <*> xs)
 
-  
+--------------------------------------------------------------------------------
+-- Implement the ZipList Applicative
+
+newtype ZipList' a =
+  ZipList' (List a)
+  deriving (Eq, Show)
+
+instance Functor ZipList' where
+  fmap f (ZipList' xs) = ZipList' $ fmap f xs
+
+instance Applicative ZipList' where
+  pure x = ZipList' (Cons x Nil)
+  (<*>) _ (ZipList' Nil) = ZipList' Nil
+  (<*>) (ZipList' Nil) _ = ZipList' Nil
+  (<*>) (ZipList' (Cons f _)) (ZipList' (Cons x Nil)) = ZipList' (Cons (f x) Nil)
+  (<*>) (ZipList' (Cons f fs)) (ZipList' (Cons x xs)) =
+    ZipList' $ Cons (f x) (fs <*> xs)
+
+
 
 --------------------------------------------------------------------------------
 main :: IO ()
