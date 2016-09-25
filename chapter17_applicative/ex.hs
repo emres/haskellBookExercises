@@ -162,6 +162,11 @@ instance Applicative List where
 --------------------------------------------------------------------------------
 -- Implement the ZipList Applicative
 
+take' :: Int -> List a -> List a
+take' _ Nil = Nil
+take' n (Cons x xs) | n <= 0    = Nil
+                    | otherwise = (Cons x (take' (n-1) xs))
+
 newtype ZipList' a =
   ZipList' (List a)
   deriving (Eq, Show)
