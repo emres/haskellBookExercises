@@ -1,5 +1,5 @@
 -- Some of the exercises from Haskell Book, Chapter 17. Applicatives
---import Control.Applicative
+import Control.Applicative (liftA3)
 --import Data.Monoid
 --import Data.List (elemIndex)
 
@@ -184,6 +184,20 @@ instance Applicative ZipList' where
       zipf Nil     _xs    = Nil
       zipf _fs    Nil     = Nil
       zipf (Cons _f _fs) (Cons _x _xs) = Cons (_f _x) (zipf _fs _xs)
+
+--------------------------------------------------------------------------------
+-- Write a function that takes inputs from stops and vowels and makes 3-tuples
+-- of all possible stop-vowel-stop combinations. These will not all correspond
+-- to real words in English, although the stop-vowel-stop pattern is common
+-- enough that many of them will.
+stops :: String
+stops = "pbtdkg"
+
+vowels :: String
+vowels = "aeiou"
+
+combos :: [a] -> [b] -> [c] -> [(a, b, c)]
+combos l1 l2 l3 = liftA3 (,,) l1 l2 l3
 
 --------------------------------------------------------------------------------
 main :: IO ()
