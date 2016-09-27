@@ -90,13 +90,12 @@ instance Functor (Sum a) where
 
 instance Applicative (Sum a) where
   pure x = (Second x)
-  (<*>) (First  _) (First x)  = First x
-  (<*>) (Second _) (First x)  = First x
-  (<*>) (Second f) (Second x) = Second (f x)
-  (<*>) (First  f) (Second _) = First f
+  (Second f) <*> (Second x)  = Second (f x)
+  (First  f) <*> (Second _)  = First f
+  _          <*> (First  x)  = First x
   
 instance Monad (Sum a) where
   return = pure
-  (>>=) (Second x) f = f x
-  (>>=) (First  x) _ = First x
+  (Second x) >>=  f = f x
+  (First  x) >>=  _ = First x
 
