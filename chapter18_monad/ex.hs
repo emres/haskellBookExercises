@@ -69,7 +69,7 @@ mkSphericalCow' name' age' weight' = do
   weighty <- noNegative weight'
   weightCheck (Cow nammy agey weighty)
 
-
+--------------------------------------------------------------------------------
 -- m ~ Either e
 -- (>>=) :: Monad m => m a -> (a -> m b) -> m b
 -- (>>=) :: Either e a -> (a -> Either e b) -> Either e b
@@ -98,4 +98,21 @@ instance Monad (Sum a) where
   return = pure
   (Second x) >>=  f = f x
   (First  x) >>=  _ = First x
+
+--------------------------------------------------------------------------------
+-- Write a Monad instance for Identity.
+newtype Identity a =
+  Identity a
+  deriving (Eq, Ord, Show)
+
+instance Functor Identity where
+  fmap f (Identity x) = Identity (f x)
+
+instance Applicative Identity where
+  pure  x = Identity x 
+  Identity f <*> Identity x = Identity (f x)
+
+instance Monad Identity where
+  return           = pure
+  Identity x >>= f = f x
 
