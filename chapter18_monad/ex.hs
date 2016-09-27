@@ -115,4 +115,23 @@ instance Applicative Identity where
 instance Monad Identity where
   return           = pure
   Identity x >>= f = f x
+  
+--------------------------------------------------------------------------------
+-- Write the following functions using the methods provided by Monad and
+-- Functor. Using stuff like identity and composition is fine, but it has to
+-- typecheck with types provided.
+
+j :: Monad m => m (m a) -> m a
+j = join
+-- Expecting the following behavior:
+
+--      Prelude> j [[1, 2], [], [3]]
+--      [1,2,3]
+--      Prelude> j (Just (Just 1))
+--      Just 1
+--      Prelude> j (Just Nothing)
+--      Nothing
+--      Prelude> j Nothing
+--      Nothing
+
 
