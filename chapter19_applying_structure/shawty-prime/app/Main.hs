@@ -92,3 +92,15 @@ main :: IO ()
 main = do
   rConn <- R.connect R.defaultConnectInfo
   scotty 3000 (app rConn)
+
+
+keyExists :: String -> IO Bool
+keyExists key = do
+  rConn <- R.connect R.defaultConnectInfo
+  isExist <- liftIO (R.runRedis rConn $ R.exists (BC.pack key))
+  case isExist of
+    Left reply -> return False
+    Right boolish -> case boolish of
+      True  -> return $ True
+      False -> return $ False
+
