@@ -25,7 +25,7 @@ randomElement xs = do
 
 shortyGen :: IO String
 shortyGen =
-  replicateM 7 (randomElement alphaNum)
+  replicateM 10 (randomElement alphaNum)
 
 saveURI :: R.Connection
         -> BC.ByteString
