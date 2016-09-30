@@ -72,10 +72,15 @@ app rConn = do
     case parsedUri of
       Just _  -> do
         shawty <- liftIO shortyGen
+        isKeyExist <- liftIO (keyExists shawty)
         let shorty = BC.pack shawty
             uri' = encodeUtf8 (TL.toStrict uri)
-        resp <- liftIO (saveURI rConn shorty uri')
-        html (shortyCreated resp shawty)
+        case isKeyExist of
+          False -> do
+            resp <- liftIO (saveURI rConn shorty uri')
+            html (shortyCreated resp shawty)
+          _     ->
+            text $ TL.concat [ "This shortURL already exists!" ]
       Nothing -> text (shortyAintUri uri)
   get "/:short" $ do
     short <- param "short"
@@ -99,8 +104,5 @@ keyExists key = do
   rConn <- R.connect R.defaultConnectInfo
   isExist <- liftIO (R.runRedis rConn $ R.exists (BC.pack key))
   case isExist of
-    Left reply -> return False
-    Right boolish -> case boolish of
-      True  -> return $ True
-      False -> return $ False
-
+    Left  _       -> return False
+    Right boolish -> return $ boolish
