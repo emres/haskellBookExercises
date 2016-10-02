@@ -28,7 +28,11 @@ minimum = foldr maybeMin Nothing
 -- mini :: (Foldable t, Ord a) => t a -> Maybe a
 -- mini xs = foldr _ Nothing xs
 
-
+maximum :: (Foldable t, Ord a) => t a -> Maybe a
+maximum = foldr max' Nothing
+  where
+    max' x Nothing = Just x
+    max' x (Just y) = Just (max x y)
 
 
 main :: IO ()
