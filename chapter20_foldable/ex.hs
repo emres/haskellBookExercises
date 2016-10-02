@@ -34,6 +34,13 @@ maximum = foldr max' Nothing
     max' x Nothing = Just x
     max' x (Just y) = Just (max x y)
 
+-- See the following thread
+-- https://mail.haskell.org/pipermail/haskell-cafe/2007-September/032014.html
+-- as well as:
+-- http://stackoverflow.com/q/11425334/236007
+length :: (Foldable t) => t a -> Int
+length = foldr (\_ n -> 1 + n)  0
+
 
 main :: IO ()
 main = putStrLn "Let's do some Foldable exercises!"
