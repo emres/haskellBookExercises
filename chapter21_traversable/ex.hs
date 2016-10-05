@@ -29,7 +29,25 @@ instance Foldable (Constant a) where
   foldr _ z (Constant _) = z
 
 instance Traversable (Constant a) where
-  traverse f (Constant x) = pure $ Constant x
+  traverse _ (Constant x) = pure $ Constant x
+
+--------------------------------------------------------------------------------
+data Optional a =
+    Nada
+  | Yep a
+
+instance Functor Optional where
+  fmap _ Nada = Nada
+  fmap f (Yep a) = Yep (f a)
+
+instance Foldable Optional where
+  foldMap _ Nada = mempty
+  foldMap f (Yep x) = f x
+
+instance Traversable Optional where
+  traverse _ Nada = pure Nada
+  traverse f (Yep x) = fmap Yep (f x)
+
 
 --------------------------------------------------------------------------------
 main :: IO ()
