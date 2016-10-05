@@ -8,14 +8,15 @@ instance Functor Identity where
   fmap f (Identity x) = Identity (f x)
 
 instance Foldable Identity where
-  foldMap _ (Identity _) = mempty
+  foldMap f (Identity x) = f x
 
 instance Applicative Identity  where
-  pure = Identity
-  Identity f <*> x = fmap f x
+  pure x = Identity x
+  Identity f <*> Identity x = Identity (f x)
   
 instance Traversable Identity where
-  traverse f (Identity x) = Identity _hole2
+  --traverse f (Identity x) = Identity <$> f x
+  traverse f (Identity x) = fmap Identity (f x)
 
 
 main :: IO ()
