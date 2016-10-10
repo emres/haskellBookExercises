@@ -1,3 +1,5 @@
+import Data.Monoid
+
 -- Write a Traversable instance for the datatype provided
 
 newtype Identity a =
@@ -95,6 +97,29 @@ instance Foldable (Three' a) where
 instance Traversable (Three' a) where
   traverse f (Three' x y z) = (fmap (Three' x) (f y)) <*> (f z)
 
+--------------------------------------------------------------------------------
+data Tree a =
+    Empty
+  | Leaf a
+  | Node (Tree a) a (Tree a)
+  deriving (Eq, Show)
+
+instance Functor Tree where
+  fmap f Empty = Empty
+  fmap f (Leaf x) = Leaf (f x)
+  fmap f (Node l x r) = Node (fmap f l) (f x) (fmap f r)
+
+-- foldMap is a bit easier and looks more natural,
+-- but you can do foldr too for extra credit.
+
+instance Foldable Tree where
+  foldMap f Empty = mempty  
+  foldMap f (Node left node right) = foldMap f left <> f node <> foldMap f right
+
+instance Traversable Tree where
+  traverse f Empty = pure Empty
+  traverse f (Leaf x) = Leaf <$> f x
+  traverse f (Node left node right) = Node <$> traverse f left <*> f node <*> traverse f right
 
 
 --------------------------------------------------------------------------------
