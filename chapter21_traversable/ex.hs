@@ -121,6 +121,21 @@ instance Traversable Tree where
   traverse f (Leaf x) = Leaf <$> f x
   traverse f (Node left node right) = Node <$> traverse f left <*> f node <*> traverse f right
 
+--------------------------------------------------------------------------------
+data S n a = S (n a) a
+
+instance Functor n => Functor (S n) where
+  fmap f (S x y) = S (fmap f x) (f y)
+
+instance Foldable n => Foldable (S n) where
+  --foldMap f (S x y) = S _h
+  foldr f z (S x y) = foldr f (f y z) x
+
+-- to make it easier, we'll give you the constraints.
+instance Traversable n => Traversable (S n) where
+  traverse f (S x y)= S <$> traverse f x <*> f y
+
+
 
 --------------------------------------------------------------------------------
 main :: IO ()
