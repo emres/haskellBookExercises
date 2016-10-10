@@ -50,5 +50,23 @@ instance Traversable Optional where
 
 
 --------------------------------------------------------------------------------
+data List a =
+    Nil
+  | Cons a (List a)
+
+
+instance Functor List where
+  fmap _ Nil = Nil
+  fmap f (Cons x xs) = (Cons (f x) (fmap f xs))
+
+instance Foldable List where
+  foldr f z (Cons x xs) = f x (foldr f z xs)
+  foldr _ z Nil = z
+
+instance Traversable List where
+  traverse _ Nil = pure Nil
+  traverse f (Cons x xs) = fmap Cons (f x) <*> traverse f xs
+
+--------------------------------------------------------------------------------
 main :: IO ()
 main = putStrLn "Let's do some Traversable exercises!"
