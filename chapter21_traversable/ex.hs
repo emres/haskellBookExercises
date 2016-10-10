@@ -83,5 +83,20 @@ instance Traversable (Three a b) where
   traverse f (Three x y z) = fmap (Three x y) (f z)
 
 --------------------------------------------------------------------------------
+data Three' a b =
+  Three' a b b
+
+instance Functor (Three' a) where
+  fmap f (Three' x y z) = Three' x (f y) (f z)
+
+instance Foldable (Three' a) where
+  foldMap f (Three' _ _ z) = f z
+
+instance Traversable (Three' a) where
+  traverse f (Three' x y z) = (fmap (Three' x) (f y)) <*> (f z)
+
+
+
+--------------------------------------------------------------------------------
 main :: IO ()
 main = putStrLn "Let's do some Traversable exercises!"
