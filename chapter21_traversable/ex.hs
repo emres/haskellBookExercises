@@ -67,6 +67,21 @@ instance Traversable List where
   traverse _ Nil = pure Nil
   traverse f (Cons x xs) = fmap Cons (f x) <*> traverse f xs
 
+
+--------------------------------------------------------------------------------
+data Three a b c =
+  Three a b c
+
+instance Functor (Three a b) where
+  fmap f (Three a b c) = Three a b (f c)
+
+instance Foldable (Three a b) where
+  foldMap f (Three _ _ z) = f z
+
+instance Traversable (Three a b) where
+  --traverse f (Three x y z) = Three x y <$> (f z)
+  traverse f (Three x y z) = fmap (Three x y) (f z)
+
 --------------------------------------------------------------------------------
 main :: IO ()
 main = putStrLn "Let's do some Traversable exercises!"
