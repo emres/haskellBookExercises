@@ -21,3 +21,9 @@ tupled' = do
   x <- cap
   y <- rev
   return (x, y)
+
+newtype Reader r a =
+  Reader { runReader :: r -> a }
+
+ask :: Reader a a
+ask = Reader id
