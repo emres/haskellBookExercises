@@ -20,6 +20,3 @@ boopDoop = do
   a <- boop
   b <- doop
   return (a + b)
-
-main :: IO ()
-main = putStrLn "Let's do some Reader exercises!"

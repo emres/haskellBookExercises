@@ -1,5 +1,9 @@
-import Data.Char
+{-# LANGUAGE InstanceSigs #-}
+
+module Main where
+
 import Control.Applicative
+import Data.Char
 
 cap :: [Char] -> [Char]
 cap xs = map toUpper xs
@@ -21,7 +25,7 @@ tupled' = do
   x <- cap
   y <- rev
   return (x, y)
-
+--------------------------------------------------------------------------------
 newtype Reader r a =
   Reader { runReader :: r -> a }
 
@@ -33,3 +37,15 @@ myLiftA2 f x y = f <$> x <*> y
 
 asks :: (r -> a) -> Reader r a
 asks f = Reader f
+--------------------------------------------------------------------------------
+
+instance Applicative (Reader r) where
+  pure :: a -> Reader r a
+  pure a = Reader $ \r -> a
+  
+  (<*>) :: Reader r (a -> b) -> Reader r a -> Reader r b
+  (Reader rab) <*> (Reader ra) = Reader $ \r -> _h2
+
+
+main :: IO ()
+main = putStrLn "Let's do some Reader exercises!"
