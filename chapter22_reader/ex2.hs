@@ -39,12 +39,20 @@ asks :: (r -> a) -> Reader r a
 asks f = Reader f
 --------------------------------------------------------------------------------
 
+-- For more detailed information, please see:
+-- http://stackoverflow.com/a/40060292/236007
+-- http://comonad.com/reader/2012/abstracting-with-applicatives/
+
+instance Functor (Reader r) where
+  fmap f (Reader x) = Reader (f . x)
+
 instance Applicative (Reader r) where
   pure :: a -> Reader r a
-  pure a = Reader $ \r -> a
+  pure a = Reader $ \_ -> a
   
   (<*>) :: Reader r (a -> b) -> Reader r a -> Reader r b
-  (Reader rab) <*> (Reader ra) = Reader $ \r -> _h2
+  (Reader rab) <*> (Reader ra) = Reader $ \r -> rab r $ ra $ r
+  --(Reader rab) <*> (Reader ra) = Reader $ rab <*> ra
 
 
 main :: IO ()
