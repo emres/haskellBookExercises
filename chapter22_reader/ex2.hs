@@ -57,11 +57,19 @@ instance Applicative (Reader r) where
 
 -- Implement the Reader Monad
 -- Don't forget InstanceSigs.
+-- Hint: constrast the type with the Applicative instance
+-- and perform the most obvious change you can imagine to make it work.
+-- Also see:
+--  https://passy.svbtle.com/dont-fear-the-reader
+--  http://www.mjoldfield.com/atelier/2014/08/monads-reader.html
 instance Monad (Reader r) where
   return = pure
 
+  -- ra :: r -> a
+  -- aRb :: a -> r -> b
+
   (>>=) :: Reader r a -> (a -> Reader r b) -> Reader r b
-  (Reader ra) >>= aRb = Reader $ \r -> undefined
+  (Reader ra) >>= aRb = Reader $ \r -> runReader (aRb (ra r)) r
 
 
 
