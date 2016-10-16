@@ -53,6 +53,17 @@ instance Applicative (Reader r) where
   (<*>) :: Reader r (a -> b) -> Reader r a -> Reader r b
   (Reader rab) <*> (Reader ra) = Reader $ \r -> rab r $ ra $ r
   --(Reader rab) <*> (Reader ra) = Reader $ rab <*> ra
+--------------------------------------------------------------------------------
+
+-- Implement the Reader Monad
+-- Don't forget InstanceSigs.
+instance Monad (Reader r) where
+  return = pure
+
+  (>>=) :: Reader r a -> (a -> Reader r b) -> Reader r b
+  (Reader ra) >>= aRb = Reader $ \r -> undefined
+
+
 
 
 main :: IO ()
