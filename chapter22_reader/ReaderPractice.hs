@@ -37,3 +37,24 @@ zs = lookup' 4 $ zip x y
 -- now zip x and z using a variable lookup key
 z' :: Integer -> Maybe Integer
 z' n = lookup' n $ zip x y
+
+-- Now we want to add the ability to make a Maybe (,) of values
+-- using Applicative. Have x1 make a tuple of xs and ys, and x2
+-- make a tuple of of ys and zs. Also, write x3 which takes one
+-- input and makes a tuple of the results of two applications of z' from above.
+--
+-- Your outputs from those should look like this:
+-- *ReaderPractice> x1
+-- Just (6,9)
+-- *ReaderPractice> x2
+-- Nothing
+-- *ReaderPractice> x3 3
+-- (Just 9,Just 9)
+x1 :: Maybe (Integer, Integer)
+x1 = undefined
+
+x2 :: Maybe (Integer, Integer)
+x2 = undefined
+
+x3 :: Integer -> (Maybe Integer, Maybe Integer)
+x3 = undefined
