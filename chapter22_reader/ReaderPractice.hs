@@ -1,6 +1,6 @@
 module ReaderPractice where
 
---import Control.Applicative
+import Control.Applicative
 import Data.Maybe
 
 x :: [Integer]
@@ -51,10 +51,11 @@ z' n = lookup' n $ zip x y
 -- *ReaderPractice> x3 3
 -- (Just 9,Just 9)
 x1 :: Maybe (Integer, Integer)
-x1 = undefined
+-- x1 = (,) <$> xs <*> ys
+x1 = liftA2 (,) xs ys
 
 x2 :: Maybe (Integer, Integer)
-x2 = undefined
+x2 = liftA2 (,) ys zs
 
 x3 :: Integer -> (Maybe Integer, Maybe Integer)
-x3 = undefined
+x3 n = (,) (z' n) (z' n)
