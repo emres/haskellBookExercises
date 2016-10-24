@@ -89,3 +89,6 @@ rollsCountLogged n g = go 0 (0, []) g
           let (die, nextGen) = randomR (1, 6) gen
           in go (sum + die) (count + 1, (intToDie die) : listOfDies) nextGen
 
+--------------------------------------------------------------------------------
+newtype Moi s a =
+  Moi { runMoi :: s -> (a, s) }
