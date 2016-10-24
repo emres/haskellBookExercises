@@ -76,3 +76,16 @@ rollsToGetN n g = go 0 0 g
       | otherwise =
           let (die, nextGen) = randomR (1, 6) gen
           in go (sum + die) (count + 1) nextGen
+
+-- Change rollsToGetN to recording the series of die
+-- that occurred in addition to the count.
+rollsCountLogged :: Int -> StdGen -> (Int, [Die])
+rollsCountLogged n g = go 0 (0, []) g
+  where
+    go :: Int -> (Int, [Die]) -> StdGen -> (Int, [Die])
+    go sum (count, listOfDies) gen
+      | sum >= n = (count, listOfDies)
+      | otherwise =
+          let (die, nextGen) = randomR (1, 6) gen
+          in go (sum + die) (count + 1, (intToDie die) : listOfDies) nextGen
+
