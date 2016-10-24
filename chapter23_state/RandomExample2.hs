@@ -97,8 +97,6 @@ newtype Moi s a =
 -- Implement the Functor instance for State.
 instance Functor (Moi s) where
   --fmap :: (a -> b) -> Moi s a -> Moi s b
-  fmap f (Moi g) = Moi $ \s -> let (x, s') = g s
-                               in (f x, s')
-
--- Prelude> runMoi ((+2) <$> (Moi $ \x -> (0, x))) 0
--- (2,0)
+  --fmap f (Moi g) = Moi $ \s -> let (x, s') = g s
+  --                             in (f x, s')
+  fmap f (Moi g) = Moi $ \x -> (f (fst (g x)), snd (g x))
