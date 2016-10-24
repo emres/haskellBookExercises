@@ -1,3 +1,4 @@
+{-# LANGUAGE InstanceSigs #-}
 module RandomExample2 where
 
 import Control.Applicative (liftA3)
@@ -92,3 +93,12 @@ rollsCountLogged n g = go 0 (0, []) g
 --------------------------------------------------------------------------------
 newtype Moi s a =
   Moi { runMoi :: s -> (a, s) }
+
+-- Implement the Functor instance for State.
+instance Functor (Moi s) where
+  --fmap :: (a -> b) -> Moi s a -> Moi s b
+  fmap f (Moi g) = Moi $ \s -> let (x, s') = g s
+                               in (f x, s')
+
+-- Prelude> runMoi ((+2) <$> (Moi $ \x -> (0, x))) 0
+-- (2,0)
