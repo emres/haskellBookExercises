@@ -100,3 +100,15 @@ instance Functor (Moi s) where
   --fmap f (Moi g) = Moi $ \s -> let (x, s') = g s
   --                             in (f x, s')
   fmap f (Moi g) = Moi $ \x -> (f (fst (g x)), snd (g x))
+
+
+instance Applicative (Moi s) where
+  pure :: a -> Moi s a
+  pure a = Moi $ \s -> (a, s)
+
+  (<*>) :: Moi s (a -> b) -> Moi s a -> Moi s b
+  (Moi f) <*> (Moi g) = Moi h
+    where h s = let (fab, s') = f s
+                    (a, s'')  = g s'
+                in (fab a, s'')
+  
