@@ -112,3 +112,64 @@ instance Applicative (Moi s) where
                     (a, s'')  = g s'
                 in (fab a, s'')
   
+instance Monad (Moi s) where
+  return = pure
+
+  (>>=) :: Moi s a -> (a -> Moi s b) -> Moi s b
+
+  Moi f >>= g = Moi h where h s =
+                              let (a, s') = f s
+                              in runMoi (g a) s'
+
+--------------------------------------------------------------------------------
+-- Write the following functions.
+-- You’ll want to use your own State type for which you’ve defined
+-- the Functor, Applicative, and Monad.
+
+-- Construct a State where the state is also the value you return.
+get :: Moi s s
+get = Moi $ \x -> (x, x)
+
+-- Expected output
+--      Prelude> runState get "curryIsAmaze"
+--      ("curryIsAmaze","curryIsAmaze")                              
+
+-- Construct a State where the resulting state is the argument provided
+-- and the value is defaulted to unit.
+put :: s -> Moi s ()
+put s = Moi $ \x -> ((), x)
+
+  
+-- Prelude> runState (put "blah") "woot"
+--    ((),"blah")
+
+-- Run the State with s and get the state that results.
+exec :: Moi s a -> s -> s
+exec (Moi sa) s = snd (sa s)
+
+-- Prelude> exec (put "wilma") "daphne"
+-- "wilma"
+-- Prelude> exec get "scooby papu"
+-- "scooby papu"
+
+-- Run the State with s and get the value that results.
+eval :: Moi s a -> s -> a
+eval (Moi sa) s = fst (sa s)
+
+-- Prelude> eval get "bunnicula"
+-- "bunnicula"
+-- Prelude> eval get "stake a bunny"
+-- "stake a bunny"
+
+-- Write a function which applies a function to create a new State.
+-- Note you don't need to compose them, you can just throw away
+-- the result because it returns unit for `a` anyway.
+
+modify :: (s -> s) -> Moi s ()
+modify ss = Moi $ \s -> ((), ss s)
+
+-- Should behave like the following:
+     -- Prelude> runState (modify (+1)) 0
+     -- ((),1)
+     -- Prelude> runState (modify (+1) >> modify (+1)) 0
+     -- ((),2)
