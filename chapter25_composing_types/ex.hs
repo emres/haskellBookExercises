@@ -31,3 +31,5 @@ instance (Applicative f, Applicative g) => Applicative (Compose f g) where
 
 --------------------------------------------------------------------------------
 
+main :: IO ()
+main = putStrLn "Let's compose some types."
