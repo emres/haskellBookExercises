@@ -3,41 +3,37 @@ module Main where
 import Criterion.Main
 import qualified Data.Map as M
 
-infixl 9 !?
-_ !? n | n < 0 = Nothing
-[] !? _        = Nothing
-(x:_) !? 0     = Just x
-(_:xs) !? n    = xs !? (n-1)
-  
-myList :: [Int]
-myList = [1..9999]
+newtype DList a =
+  DL { unDL :: [a] -> [a] }
 
--- main :: IO ()
--- main = defaultMain
---   [ bench "index list 9999"
---     $ whnf (myList !!) 9998
---   , bench "index list maybe index 9999"
---     $ whnf (myList !?) 9998
---   ]
+empty :: DList a
+empty = undefined
+{-# INLINE empty #-}
 
--- main :: IO ()
--- main = defaultMain
---   [ bench "map list 9999" $ whnf (map (+1)) myList ]
+singleton :: a -> DList a
+singleton = undefined
+{-# INLINE singleton #-}
 
-genList :: Int -> [(String, Int)]
-genList n = go n []
-  where go 0 xs = ("0", 0) : xs
-        go n' xs = go (n' - 1) ((show n', n') : xs)
+toList :: DList a -> [a]
+toList = undefined
+{-# INLINE toList #-}
 
-pairList :: [(String, Int)]
-pairList = genList 9001
+-- Prepend a single element to a dlist.
+infixr `cons`
+cons      :: a -> DList a -> DList a
+cons x xs = DL ((x:) . unDL xs)
+{-# INLINE cons #-}
 
-testMap :: M.Map String Int
-testMap = M.fromList pairList
+-- Append a single element to a dlist. infixl `snoc`
+snoc :: DList a -> a -> DList a
+snoc = undefined
+{-# INLINE snoc #-}
+
+-- Append dlists.
+append :: DList a -> DList a -> DList a
+append = undefined
+{-# INLINE append #-}
 
 main :: IO ()
-main = defaultMain
-  [ bench "lookup one thing, list" $ whnf (lookup "doesntExist") pairList
-  , bench "lookup one thing, map" $
-    whnf (M.lookup "doesntExist") testMap
-  ]
+main = do
+  putStrLn "some benchmarking for DList"
