@@ -7,11 +7,11 @@ newtype DList a =
   DL { unDL :: [a] -> [a] }
 
 empty :: DList a
-empty = undefined
+empty = DL id
 {-# INLINE empty #-}
 
 singleton :: a -> DList a
-singleton = undefined
+singleton = \x -> DL (x :)
 {-# INLINE singleton #-}
 
 toList :: DList a -> [a]
