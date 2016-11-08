@@ -15,7 +15,7 @@ singleton = \x -> DL (x :)
 {-# INLINE singleton #-}
 
 toList :: DList a -> [a]
-toList = undefined
+toList wrappedFunctionForXs = (unDL wrappedFunctionForXs) []
 {-# INLINE toList #-}
 
 -- Prepend a single element to a dlist.
