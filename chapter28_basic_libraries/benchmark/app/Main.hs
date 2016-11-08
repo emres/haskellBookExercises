@@ -47,8 +47,8 @@ constructDlist i = toList $ go i empty
         go n xs = go (n-1) (singleton n `append` xs)
 
 main :: IO ()
-main = do
-  putStrLn "Let's run some DList benchmarks!"
+main = 
+  putStrLn "Let's run some DList benchmarks!" >>
   defaultMain
     [ bench "concat list" $ whnf schlemiel 123456
     , bench "concat dlist" $ whnf constructDlist 123456
