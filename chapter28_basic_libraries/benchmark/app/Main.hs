@@ -26,7 +26,7 @@ cons x xs = DL ((x:) . unDL xs)
 
 -- Append a single element to a dlist. infixl `snoc`
 snoc :: DList a -> a -> DList a
-snoc = undefined
+snoc wrappedFnForXs x = DL $ (unDL wrappedFnForXs . (x:))
 {-# INLINE snoc #-}
 
 -- Append dlists.
