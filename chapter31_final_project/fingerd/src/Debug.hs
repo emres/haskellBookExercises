@@ -15,7 +15,11 @@ logAndEcho sock = forever $ do
           sendAll conn msg
 
 main :: IO ()
-main = withSocketsDo $ do
+--main = withSocketsDo $ do
+-- Apparently we can make do without withSocketsdo, as long as we don't care about
+-- MS Windows compatibility. See the following for more details:
+-- https://hackage.haskell.org/package/network-2.6.3.1/docs/Network-Socket.html#v:withSocketsDo
+main = do
   addrinfos <- getAddrInfo
                (Just (defaultHints
                       {addrFlags = [AI_PASSIVE]}))
